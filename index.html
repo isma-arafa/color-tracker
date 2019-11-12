@@ -1,6 +1,11 @@
 <!doctype html>
 <!--
  * indonesia goyang (belajar coding)
+ * deskripsi:
+ * - menggambar 'kain' dengan motif peta indonesia
+ * - kain ini bisa digoyang dengan disentuh/mouse click
+ * - kain ini juga bisa digoyang dengan 'pointer' warna magenta 
+ *   ( computer vision : color-tracking )
  * @author isma.info.id@gmail.com
  * @version v1.0
  * @link https://github.com/isma-arafa/color-tracker
@@ -27,27 +32,30 @@
 <body>
   <div class="demo-frame">
     <div class="demo-container">
-      <video  id="video"  width="600" height="450" preload autoplay loop muted controls></video>
-      <canvas id="canvas2" width="600" height="450"></canvas>
+      <video  id="video"  width="700" height="450" preload autoplay loop muted controls></video>
+      <canvas id="canpas" width="700" height="450"></canvas>
     </div>
   </div>
 
 <script>
+var pWidth = 700; // canvas width
+var pHeight= 450; // canvas height
+
     /* script color tracker */
     window.onload = function() {
-      var video = document.getElementById('video');
-      var canvas2 = document.getElementById('canvas2');
-      var context = canvas2.getContext('2d');
-	  console.log("loaded...");
+      var video  = document.getElementById('video');
+      var canpas = document.getElementById('canpas');
+      var context = canpas.getContext('2d');
+	  console.log("trackingjs loaded... (https://trackingjs.com)");
 	  //var myTracker = new tracking.ColorTracker(['cyan','magenta','yellow']); // default
 	  var myTracker = new tracking.ColorTracker();
       tracking.track('#video', myTracker, { camera: true });
 
       myTracker.on('track', function(event) {
-        context.clearRect(0, 0, canvas2.width, canvas2.height);
+        context.clearRect(0, 0, canpas.width, canpas.height);
 			
         event.data.forEach(function(rect) {
-		  console.log('ada data',rect.color);
+		  
           if (rect.color === 'custom') {
             //rect.color = myTracker.customColor;
           }
@@ -57,7 +65,6 @@
 			e.clientX = rect.x;
 			e.clientY = rect.y;
 			pointerDown(e);
-			
           }
           context.strokeStyle = rect.color;
           context.strokeRect(rect.x, rect.y, rect.width, rect.height);
@@ -70,12 +77,9 @@
 
      //initGUIControllers(myTracker);
     };
-</script>
-  
-    
-<script>
-	/* script bendera */
-	//console.clear();
+
+/* script bendera */
+//console.clear();
 let mesh;
 let cloth;
 
@@ -123,6 +127,7 @@ let pin = gui.add(opts, 'pinCorners');
 pin.onChange(loadTexture);
 gui.close();
 dat.GUI.toggleHide();
+
     // var myType = gui.add(myOptions, 'type', [ 'random', 'unify', 'reverse', 'vary', 'compact' ]),
     //length = glui.add(r, 'length', -500, 500).step(10),
     //extrude = gui.add(r, 'extrude', -2, 2).step(0.1),
@@ -130,8 +135,8 @@ dat.GUI.toggleHide();
 
 let canvas = document.createElement('canvas');
 let ctx = canvas.getContext('2d');
-canvas.width = Math.min(700, window.innerWidth)
-canvas.height = 400
+canvas.width = Math.min(pWidth, window.innerWidth);
+canvas.height = pHeight;
 document.body.appendChild(canvas);
 
 ctx.strokeStyle = '#555';
@@ -418,7 +423,6 @@ function pointerMove(e) {
   mouse.py = mouse.y || pointer.clientY
   mouse.x = pointer.clientX
   mouse.y = pointer.clientY
-  //console.log( mouse.x,  mouse.y);
 }
 
 function pointerDown(e){
