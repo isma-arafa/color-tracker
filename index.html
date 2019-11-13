@@ -25,6 +25,14 @@
     margin-left: 0px;
     margin-top: 0px;
     position: absolute;
+	}
+	
+  #pideo, #canpas {	
+	-moz-transform: scale(-1, 1);
+    -o-transform: scale(-1, 1);
+    -webkit-transform: scale(-1, 1);
+    transform: scale(-1, 1);
+    filter: FlipH;
   }
   </style>
   
@@ -32,7 +40,7 @@
 <body>
   <div class="demo-frame">
     <div class="demo-container">
-      <video  id="video"  width="700" height="450" preload autoplay loop muted controls></video>
+      <video  id="pideo"  width="700" height="450" preload autoplay loop muted controls></video>
       <canvas id="canpas" width="700" height="450"></canvas>
     </div>
   </div>
@@ -43,13 +51,13 @@ var pHeight= 450; // canvas height
 
     /* script color tracker */
     window.onload = function() {
-      var video  = document.getElementById('video');
+      var video  = document.getElementById('pideo');
       var canpas = document.getElementById('canpas');
       var context = canpas.getContext('2d');
 	  console.log("trackingjs loaded... (https://trackingjs.com)");
 	  //var myTracker = new tracking.ColorTracker(['cyan','magenta','yellow']); // default
 	  var myTracker = new tracking.ColorTracker();
-      tracking.track('#video', myTracker, { camera: true });
+      tracking.track('#pideo', myTracker, { camera: true });
 
       myTracker.on('track', function(event) {
         context.clearRect(0, 0, canpas.width, canpas.height);
@@ -66,12 +74,16 @@ var pHeight= 450; // canvas height
 			e.clientY = rect.y;
 			pointerDown(e);
           }
+		  
           context.strokeStyle = rect.color;
           context.strokeRect(rect.x, rect.y, rect.width, rect.height);
-          context.font = '11px Helvetica';
+          /*
+		  context.font = '11px Helvetica';
           context.fillStyle = "#fff";
           context.fillText('x: ' + rect.x + 'px', rect.x + rect.width + 5, rect.y + 11);
           context.fillText('y: ' + rect.y + 'px', rect.x + rect.width + 5, rect.y + 22);
+		  */
+		  
         });
       });
 
@@ -95,7 +107,7 @@ let opts = {
   pointsX: 20,
   pointsY: 22,
   renderCloth: false,
-  mouseInfluence: 35,
+  mouseInfluence: 10,
   pinCorners: true,
   randomImage(){
     this.image = 'img/indonesia2.png';
@@ -122,21 +134,19 @@ let gravity = gui.add(opts, 'gravity', 0, 1000).step(20);
 let friction = gui.add(opts, 'friction', 0.5, 1).step(0.005);
 let bounce = gui.add(opts, 'bounce', 0, 2).step(0.1);
 
-
 let pin = gui.add(opts, 'pinCorners');
 pin.onChange(loadTexture);
 gui.close();
 dat.GUI.toggleHide();
 
-    // var myType = gui.add(myOptions, 'type', [ 'random', 'unify', 'reverse', 'vary', 'compact' ]),
-    //length = glui.add(r, 'length', -500, 500).step(10),
-    //extrude = gui.add(r, 'extrude', -2, 2).step(0.1),
-    //offset = gui.add(r, 'offset', -1, 1).step(0.1);
-
 let canvas = document.createElement('canvas');
 let ctx = canvas.getContext('2d');
 canvas.width = Math.min(pWidth, window.innerWidth);
 canvas.height = pHeight;
+
+//canvas.width = window.innerWidth;
+//canvas.height = window.innerHeight;
+
 document.body.appendChild(canvas);
 
 ctx.strokeStyle = '#555';
@@ -393,6 +403,7 @@ class Cloth {
         i *= 2;
         mesh.vertices[i] = point.x;
         mesh.vertices[i+1] = point.y;
+
       }
     });
     
